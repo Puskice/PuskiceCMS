@@ -1,6 +1,7 @@
 vendor/
 node_modules/
 .phpintel/
+sftp-config.json
 
 # Laravel 4 specific
 bootstrap/compiled.php
