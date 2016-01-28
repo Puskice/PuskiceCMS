@@ -1,0 +1,191 @@
+/*
+*  Puskice CSS - Vuk Stankovic - 2014 september
+*  Main CSS file
+*
+*/
+/*.container{border: 1px solid;}*/
+body{background-color: #f5f5f5;}
+.clearfix{clear:both;}
+.banner_left {position: fixed;width: 470px;height: auto;left: 50%;z-index: 900;margin-left: -970px;top: 0;}
+.banner_right {position: fixed;width: 470px;height: auto;left: 50%;z-index: 900;margin-left: 500px;top: 0;}
+
+/* TOP MENU */
+.top-menu{padding-left: 0;padding-right: 0;font-size: 12px;}
+.top-menu .navbar{border-radius: initial;border: none; background-color: #2a5486;color: #fff;min-height: 30px;margin-bottom: 20px;}
+.top-menu .navbar label{color:#333;}
+.top-menu .navbar-default .navbar-nav>li>a{color:#fff;}
+.top-menu .navbar-default .navbar-nav>li>a:hover{color:#eee;background-color: #3d7caf;}
+.top-menu .navbar-brand{padding: 5px 15px;height: 30px;}
+.top-menu .navbar-default .navbar-brand{color:#fff;}
+.top-menu .navbar-default .navbar-nav>.active>a, 
+.top-menu .navbar-default .navbar-nav>.active>a:hover, 
+.top-menu .navbar-default .navbar-nav>.active>a:focus{background-color: #3d7caf;color: #fff;}
+.top-menu .navbar-default .navbar-nav>.open>a,
+.top-menu .navbar-default .navbar-nav>.open>a:hover, 
+.top-menu .navbar-default .navbar-nav>.open>a:focus{background-color: #3d7caf;color: #fff;}
+.top-menu .navbar-nav>li>a{padding-top: 5px;padding-bottom: 5px;}
+.top-menu .navbar-toggle{padding: 5px 10px;margin-top: 5px;margin-bottom: 5px;}
+.top-menu .navbar-default .navbar-toggle .icon-bar{background-color: #fff;}
+.top-menu .navbar-default .navbar-toggle:hover, .top-menu .navbar-default .navbar-toggle:focus{background-color: #3d7caf;}
+.top-menu .dropdown-menu{box-shadow: none;}
+.top-menu .dropdown-menu>li>a:hover, 
+.top-menu .dropdown-menu>li>a:focus{background-color:#3d7caf;color:#fff;}
+.login-form{padding: 10px;width:300px;}
+
+/* MAIN MENU */
+.main-menu{margin-bottom: 10px;font-size: 13px;}
+.main-menu .navbar{margin-bottom: 0px;background-color: #2a5486;border:0px;border-radius: 0px;}
+.main-menu .navbar-nav.navbar-right:last-child{margin-right: 0px;}
+.main-menu .navbar-default .navbar-nav>li>a{color:#fff;}
+.main-menu .navbar-default .navbar-nav>li>a:hover{color:#eee;background-color: #3d7caf;}
+.main-menu .navbar-default .navbar-nav>.active>a, 
+.main-menu .navbar-default .navbar-nav>.active>a:hover, 
+.main-menu .navbar-default .navbar-nav>.active>a:focus{background-color: #3d7caf;color: #fff;}
+.main-menu .navbar-default .navbar-nav>.open>a,
+.main-menu .navbar-default .navbar-nav>.open>a:hover, 
+.main-menu .navbar-default .navbar-nav>.open>a:focus{background-color: #3d7caf;color: #fff;}
+
+.header-wrapper{padding-bottom: 20px;background-color: #fff;}
+.header .leaderboard{float:right;}
+.header .news-carousel{color: #fff;}
+.header .news-carousel .carousel-item{background-size: 100% 100%; min-height: 90px;position: relative;margin-left: 5px;}
+.header .news-carousel .carousel-item .carousel-title{position: absolute;bottom: 0;min-height: 30px;padding: 5%;width:100%;background-color: rgba(33,33,33,0.5);}
+.header .news-carousel .carousel-item h4{font-size: 16px;margin: 0px;}
+.header .carousel-container{padding-right: 25px;padding-left: 25px;}
+.news-slider .pgwSlider .ps-current{font-size: 12px;font-family: inherit;}
+
+/* BANERI ISPOD SLAJDERA */
+.banners{margin-bottom: 10px;overflow: hidden;}
+/*.banners div[class*='col-md-'] {padding: 0;}*/
+.banner_160x60{float:right;}
+.banner_468x60{float:left;}
+
+/* NEWS TICKER */
+.news-ticker .well{padding: 0px;border-radius: 0px;background-color: #fff;border: 1px solid #ddd;}
+.news-ticker .ticker-title{background-color: #bb0000;padding: 5px 10px;color:#fff;font-weight: 800;float: left}
+.news-ticker #ticker ul{list-style: none;padding-left: 0;}
+.news-ticker #ticker li{padding: 5px 10px;font-style: italic;}
+.arrow-right {float: left;width:0;height:0;border-top:15px solid transparent;border-bottom:15px solid transparent;border-left:15px solid #bb0000;}
+
+.news-slider{margin-bottom: 20px;}
+.news-carousel a{color:#fff;}
+.news-carousel a:hover{color:#fff;}
+
+.white-container{background-color: #fff;border-bottom: 2px solid #dddddd;margin-bottom: 20px;}
+.white-wrapper{background-color: #fff;}
+
+.center-column, .wide-sidebar {background-color: #fff; border-right: 1px solid #ddd; border-bottom: 2px solid #ddd;}
+.main-content{margin-bottom: 20px;}
+
+.news-column{background-color: #fff;border-bottom: 2px solid #ddd; border-right: 1px solid#ddd;padding: 5px;border-top: 4px solid #3d7caf;margin-bottom: 20px;}
+.news-column .column-header h3{margin-top: 0px;}
+.news-column .column-body .column-article{margin-bottom: 10px;}
+.news-column .column-body .column-article img{float: left;margin-right: 5px;}
+.news-column .column-body .column-article h4{margin-left: 5px;font-size: 14px;}
+
+.poll{background-color:#2a5486;border-top: 4px solid #3d7caf}
+.poll h3 a{color: #fff;}
+.poll label, .poll p{color:#fff;}
+
+.center-column{border-top: 4px solid #3d7caf; padding: 10px;}
+.center-column .center-body .center-article img{float:left;padding-right: 2%;}
+.center-column .center-body .center-article h4{}
+.center-column .center-body .center-article p{text-align: justify;}
+
+.wide-sidebar .panel-group .panel+.panel{border-radius: 0px; margin-top: 0px;}
+.wide-sidebar .panel-default>.panel-heading{color:#fff;background-color:#2a5486;border-color: #3d7caf;border-radius: 0px;}
+.wide-sidebar .banner_300x250{max-width: 300px;margin: 0 auto;}
+.wide-sidebar .news-column{width:auto;}
+
+.footer .col-md-12 {background-color: #fff;border-top: 2px solid #dddddd;font-size:12px;}
+.footer a{padding:15px 15px 30px 15px;display: inline-block;color: #333;}
+.footer a:first-child{padding-left: 0px;}
+.footer a.copyright{padding-right: 0px;float: right;}
+
+.image-of-the-week h4{padding: 10px;}
+.image-of-the-week .carousel-caption{background-color: rgba(33,33,33,0.6);}
+.image-of-the-week .carousel-caption h3 a{color: #fff;}
+
+.main-content ul.pgwSlider>li, .main-content .pgwSlider>.ps-list>li{font-size: 12px;}
+.content{background: #fff;padding: 10px;margin-bottom: 10px;}
+.content-container{margin-bottom: 10px;}
+.featured-image{position: relative;margin-bottom: 10px;}
+.featured-image img{width:100%;}
+.image-caption{position: absolute;bottom: 0;color: #fff;z-index: 999;background: rgba(33,33,33, 0.5);width: 100%;padding: 0 10px;}
+.image-caption p{margin-top: 10px;font-weight: 800}
+.subjects .tab-pane{padding:15px 10px;}
+.subjects .file{padding:10px;border-bottom: 1px solid #333;}
+.subjects .file p{margin-bottom: 0px;float: left;}
+.subjects .file a.file-title{float:left;}
+.subjects .file .thumbs .thumbsdown{float:right;}
+.subjects .file .thumbs .thumbsdown .thmb_link{color:#CC2F32;text-decoration: none;padding-left:10px;}
+.subjects .file .thumbs .thumbsup{float:right;}
+.subjects .file .thumbs .thumbsup .thmb_link{color:#41992B;text-decoration: none;padding-left:10px;}
+.subjects .file .thumbs {float:right;margin-top: 10px;}
+.thumbs-news .thumbsdown{float:right;}
+.thumbs-news .thumbsdown .thmb_link{color:#CC2F32;text-decoration: none;padding-left:10px;}
+.thumbs-news .thumbsup{float:right;}
+.thumbs-news .thumbsup .thmb_link{color:#41992B;text-decoration: none;padding-left:10px;}
+.thumbs-news {float:right;margin-top: 10px;}
+.subjects .file .file-info {float:left;}
+.share_area{padding: 10px 0;}
+.share_area .fb-share-button{float: left;margin-right: 10px;}
+.share_area #twitter-widget-0{width: 85px !important;float: left;}
+.share_area #___plusone_0{width: 65px !important;float: left;}
+.share_area a.PIN_1416696029195_pin_it_button_20{float: left !important;margin-right: 10px !important;}
+.follow_buttons{padding: 10px 0;}
+.follow_buttons .fb-like{float: left;margin-right: 10px;}
+.follow_buttons #twitter-widget-1{width: 85px !important;float: left;}
+.follow_buttons #___follow_0{width: 65px !important;float: left;}
+.article h2 a{text-decoration: none;}
+blockquote{background:#f9f9f9;border-left:10px solid #ccc;margin:1.5em 10px;padding:0.5em 10px;quotes:"\201C" "\201D" "\2018" "\2019";}
+blockquote:before{color:#ccc;content:open-quote;font-size:4em;line-height:0.1em;margin-right:0.25em;vertical-align:-0.4em;}
+blockquote p{display:inline;}
+.text-content img{max-width: 100%;}
+
+@media(min-width: 767px){
+	.news-column{width: 98%; margin:0 auto;margin-bottom: 20px;}
+	.news-box div[class*='col-md-']{padding:0px;}
+	.news-box div[class*='col-md-']:first-child .news-column{margin-left: 0;}
+	.news-box div[class*='col-md-']:last-child .news-column{margin-right: 0;}
+	.center-content div[class*='col-md-']{padding:0px;}
+	.center-content div[class*='col-md-']:first-child .news-column{margin-left: 0;}
+	.center-content div[class*='col-md-']:last-child .news-column{margin-right: 0;}
+	.right-fix{margin-right: 0px;}
+	
+}
+
+@media(max-width: 767px){
+	.news-column{margin-bottom: 20px;}
+	.news-box div[class*='col-md-']{padding:0px;}
+	.center-content div[class*='col-md-']{padding:0px;}
+	.main-menu .navbar-default .navbar-nav .open .dropdown-menu>li>a:hover, 
+	.main-menu .navbar-default .navbar-nav .open .dropdown-menu>li>a:focus{
+		color:#eee;
+	}
+	.main-menu .navbar-default .navbar-nav .open .dropdown-menu>li>a{
+		color: #fff;
+	}
+
+	.main-menu .navbar-default .navbar-nav .open .dropdown-menu>li>a:hover, 
+	.main-menu .navbar-default .navbar-nav .open .dropdown-menu>li>a:focus{color:#eee;}
+	.main-menu .navbar-default .navbar-nav .open .dropdown-menu>li>a{color: #fff;}
+	.main-menu .navbar-default .navbar-nav .open .dropdown-menu>li>p{color:#ccc;}
+	.top-menu .navbar-default .navbar-nav .open .dropdown-menu>li>a{color: #fff;font-size: 12px;}
+	.top-menu .navbar-default .navbar-nav .open .dropdown-menu>li>a:hover{color: #eee;}
+}
+
+/* FIXES */
+#div-gpt-ad-1372453927793-0{max-width: 100%;max-height:90px;overflow: hidden;}
+#div-gpt-ad-1372454619082-0{width:468px; height:60px;}
+#div-gpt-ad-1377030437246-0{width:160px; height:60px;}
+.carousel-container .slick-next:before{color: #2a5486}
+.carousel-container .slick-prev:before{color: #2a5486}
+.twitter-timeline{width: 100% !important}
+.pagination>li>a, .pagination>li>span{font-size: 12px;}
+.fb-like-box{width: 100% !important;}
+.fb-like-box span{width: 100% !important;}
+.fb-like-box span iframe{width: 100% !important;}
+.nav>li>a{padding-left: 10px;padding-right: 10px;}
+.gsc-input-box{height: 30px !important;}
+.meme{float:left;margin-right:10px;text-align: center;}

@@ -1,0 +1,355 @@
+@section('megaMenu')
+<div class="navbar navbar-default yamm">
+	<div class="navbar-header">
+    	<button type="button" data-toggle="collapse" data-target="#navbar-collapse-2" class="navbar-toggle"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+  	</div>
+  	<div id="navbar-collapse-2" class="navbar-collapse collapse">
+    	<ul class="nav navbar-nav">
+      		<li class="dropdown yamm-fw">
+        	<a href="#" class="dropdown-toggle" data-toggle="dropdown">{{__("Прва")}} <b class="caret"></b></a>
+	        	<ul class="dropdown-menu">
+	        		<li>
+	               		<div class="yamm-content">
+		                    <div class="row">
+		                      	<ul class="col-sm-3 list-unstyled">
+			                        <li>
+			                          <p><strong>{{__("Информациони системи и технологије")}}</strong></p>
+			                        </li>
+			                        <li><a href="">{{__("Прва")}}</a></li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+		                      	</ul>
+		                     	<ul class="col-sm-3 list-unstyled">
+			                        <li>
+			                          <p><strong>Links Title</strong></p>
+			                        </li>
+			                        <li><a href="#"> Link Item </a></li>
+			                        <li><a href="#"> Link Item </a></li>
+			                        <li><a href="#"> Link Item </a></li>
+			                        <li><a href="#"> Link Item </a></li>
+			                        <li><a href="#"> Link Item </a></li>
+			                        <li><a href="#"> Link Item </a></li>
+		                      	</ul>
+		                      	<ul class="col-sm-3 list-unstyled">
+			                        <li>
+			                          <p><strong>Section Title</strong></p>
+			                        </li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+		                      	</ul>
+		                      	<ul class="col-sm-3 list-unstyled">
+			                        <li>
+			                          <p><strong>Section Title</strong></p>
+			                        </li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>
+			                          <ul>
+			                            <li><a href="#"> Link Item </a></li>
+			                            <li><a href="#"> Link Item </a></li>
+			                            <li><a href="#"> Link Item </a></li>
+			                          </ul>
+			                        </li>
+		                      	</ul>
+		                    </div>
+		                </div>
+	           		</li>
+	         	</ul>
+	        </li>
+	        <li class="dropdown yamm-fw">
+	        	<a href="#" class="dropdown-toggle" data-toggle="dropdown">{{__("Друга")}} <b class="caret"></b></a>
+	        	<ul class="dropdown-menu">
+	        		<li>
+	               		<div class="yamm-content">
+		                    <div class="row">
+		                      	<ul class="col-sm-3 list-unstyled">
+			                        <li>
+			                          <p><strong>{{__("Информациони системи и технологије")}}</strong></p>
+			                        </li>
+									<li><a href="{{Request::root()}}/druga/informacioni-sistemi-i-tehnologije/arhitektura-racunara-i-operativni-sistemi">{{__("Архитектура рачунара и оперативни системи")}}</a></li>
+									<li><a href="{{Request::root()}}/druga/informacioni-sistemi-i-tehnologije/diskretne-matematicke-strukture">{{__("Дискретне математичке структуре")}}</a></li>
+									<li><a href="{{Request::root()}}/druga/informacioni-sistemi-i-tehnologije/finansijski-menadzment-i-racunovodstvo">{{__("Финансијски менаџмент и рачуноводство")}}</a></li>
+									<li><a href="{{Request::root()}}/druga/menadzment/marketing">{{__("Маркетинг")}}</a></li>
+									<li><a href="{{Request::root()}}/druga/informacioni-sistemi-i-tehnologije/matematika-3">{{__("Математика 3")}}</a></li>
+									<li><a href="{{Request::root()}}/druga/menadzment/menadzment-tehnologije-i-razvoja">{{__("Менаџмент технологије и развоја")}}</a></li>
+									<li><a href="{{Request::root()}}/druga/informacioni-sistemi-i-tehnologije/numericka-analiza">{{__("Нумеричка анализа")}}</a></li>
+									<li><a href="{{Request::root()}}/druga/informacioni-sistemi-i-tehnologije/principi-programiranja">{{__("Принципи програмирања")}}</a></li>
+									<li><a href="{{Request::root()}}/druga/informacioni-sistemi-i-tehnologije/statistika">{{__("Статистика")}}</a></li>
+									<li><a href="{{Request::root()}}/druga/zajednicke-osnove/strani-jezik-3">{{__("Страни језик 3")}}</a></li>
+									<li><a href="{{Request::root()}}/druga/informacioni-sistemi-i-tehnologije/strukture-podataka-i-algoritmi">{{__("Структуре података и алгоритми")}}</a></li>
+									<li><a href="{{Request::root()}}/druga/zajednicke-osnove/teorija-verovatnoce">{{__("Теорија вероватноће")}}</a></li>
+		                      	</ul>
+		                     	<ul class="col-sm-3 list-unstyled">
+			                        <li>
+			                          <p><strong>Links Title</strong></p>
+			                        </li>
+			                        <li><a href="#"> Link Item </a></li>
+			                        <li><a href="#"> Link Item </a></li>
+			                        <li><a href="#"> Link Item </a></li>
+			                        <li><a href="#"> Link Item </a></li>
+			                        <li><a href="#"> Link Item </a></li>
+			                        <li><a href="#"> Link Item </a></li>
+		                      	</ul>
+		                      	<ul class="col-sm-3 list-unstyled">
+			                        <li>
+			                          <p><strong>Upravljanje kvalitetom</strong></p>
+			                        </li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+		                      	</ul>
+		                      	<ul class="col-sm-3 list-unstyled">
+			                        <li>
+			                          <p><strong>Section Title</strong></p>
+			                        </li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>
+			                          <ul>
+			                            <li><a href="#"> Link Item </a></li>
+			                            <li><a href="#"> Link Item </a></li>
+			                            <li><a href="#"> Link Item </a></li>
+			                          </ul>
+			                        </li>
+		                      	</ul>
+		                    </div>
+		                </div>
+	           		</li>
+	         	</ul>
+	        </li>
+	        <li class="dropdown yamm-fw">
+	        	<a href="#" class="dropdown-toggle" data-toggle="dropdown">Treca <b class="caret"></b></a>
+	        	<ul class="dropdown-menu">
+	        		<li>
+	               		<div class="yamm-content">
+		                    <div class="row">
+		                      	<ul class="col-sm-3 list-unstyled">
+			                        <li>
+			                          <p><strong>Informacioni sistemi i tehnologije</strong></p>
+			                        </li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+		                      	</ul>
+		                     	<ul class="col-sm-3 list-unstyled">
+			                        <li>
+			                          <p><strong>Links Title</strong></p>
+			                        </li>
+			                        <li><a href="#"> Link Item </a></li>
+			                        <li><a href="#"> Link Item </a></li>
+			                        <li><a href="#"> Link Item </a></li>
+			                        <li><a href="#"> Link Item </a></li>
+			                        <li><a href="#"> Link Item </a></li>
+			                        <li><a href="#"> Link Item </a></li>
+		                      	</ul>
+		                      	<ul class="col-sm-3 list-unstyled">
+			                        <li>
+			                          <p><strong>Operacioni menadzment</strong></p>
+			                        </li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+		                      	</ul>
+		                      	<ul class="col-sm-3 list-unstyled">
+			                        <li>
+			                          <p><strong>Section Title</strong></p>
+			                        </li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>
+			                          <ul>
+			                            <li><a href="#"> Link Item </a></li>
+			                            <li><a href="#"> Link Item </a></li>
+			                            <li><a href="#"> Link Item </a></li>
+			                          </ul>
+			                        </li>
+		                      	</ul>
+		                    </div>
+		                </div>
+	           		</li>
+	         	</ul>
+	        </li>
+	        <li class="dropdown yamm-fw">
+	        	<a href="#" class="dropdown-toggle" data-toggle="dropdown">Cetvrta <b class="caret"></b></a>
+	        	<ul class="dropdown-menu">
+	        		<li>
+	               		<div class="yamm-content">
+		                    <div class="row">
+		                      	<ul class="col-sm-3 list-unstyled">
+			                        <li>
+			                          <p><strong>Informacioni sistemi i tehnologije</strong></p>
+			                        </li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+		                      	</ul>
+		                     	<ul class="col-sm-3 list-unstyled">
+			                        <li>
+			                          <p><strong>Menadzment</strong></p>
+			                        </li>
+			                        <li><a href="#"> Link Item </a></li>
+			                        <li><a href="#"> Link Item </a></li>
+			                        <li><a href="#"> Link Item </a></li>
+			                        <li><a href="#"> Link Item </a></li>
+			                        <li><a href="#"> Link Item </a></li>
+			                        <li><a href="#"> Link Item </a></li>
+		                      	</ul>
+		                      	<ul class="col-sm-3 list-unstyled">
+			                        <li>
+			                          <p><strong>Section Title</strong></p>
+			                        </li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+		                      	</ul>
+		                      	<ul class="col-sm-3 list-unstyled">
+			                        <li>
+			                          <p><strong>Section Title</strong></p>
+			                        </li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>
+			                          <ul>
+			                            <li><a href="#"> Link Item </a></li>
+			                            <li><a href="#"> Link Item </a></li>
+			                            <li><a href="#"> Link Item </a></li>
+			                          </ul>
+			                        </li>
+		                      	</ul>
+		                    </div>
+		                </div>
+	           		</li>
+	         	</ul>
+	        </li>
+	        <li class="dropdown yamm-fw">
+	        	<a href="#" class="dropdown-toggle" data-toggle="dropdown">Fakultet <b class="caret"></b></a>
+	        	<ul class="dropdown-menu">
+	        		<li>
+	               		<div class="yamm-content">
+		                    <div class="row">
+		                      	<ul class="col-sm-3 list-unstyled">
+			                        <li>
+			                          <p><strong>Vazne informacije</strong></p>
+			                        </li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+		                      	</ul>
+		                     	<ul class="col-sm-3 list-unstyled">
+			                        <li>
+			                          <p><strong>Studentske organizacije</strong></p>
+			                        </li>
+			                        <li><a href="#"> Link Item </a></li>
+			                        <li><a href="#"> Link Item </a></li>
+			                        <li><a href="#"> Link Item </a></li>
+			                        <li><a href="#"> Link Item </a></li>
+			                        <li><a href="#"> Link Item </a></li>
+			                        <li><a href="#"> Link Item </a></li>
+		                      	</ul>
+		                      	<ul class="col-sm-3 list-unstyled">
+			                        <li>
+			                          <p><strong>Stipendije</strong></p>
+			                        </li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+		                      	</ul>
+		                      	<ul class="col-sm-3 list-unstyled">
+			                        <li>
+			                          <p><strong>&nbsp;</strong></p>
+			                        </li>
+			                        <li>List Item</li>
+			                        <li>List Item</li>
+			                        <li>
+			                          <ul>
+			                            <li><a href="#"> Link Item </a></li>
+			                            <li><a href="#"> Link Item </a></li>
+			                            <li><a href="#"> Link Item </a></li>
+			                          </ul>
+			                        </li>
+		                      	</ul>
+		                    </div>
+		                </div>
+	           		</li>
+	         	</ul>
+	        </li>
+	        <li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Prijatelji<b class="caret"></b></a>
+                <ul role="menu" class="dropdown-menu">
+	                <li><a tabindex="-1" href="#"> Action </a></li>
+	                <li><a tabindex="-1" href="#"> Another action </a></li>
+	                <li><a tabindex="-1" href="#"> Something else here </a></li>
+	                <li class="divider"></li>
+	                <li><a tabindex="-1" href="#"> Separated link </a></li>
+	            </ul>
+          	</li>
+          	<li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Meme<b class="caret"></b></a>
+                <ul role="menu" class="dropdown-menu">
+	                <li><a tabindex="-1" href="#"> Action </a></li>
+	                <li><a tabindex="-1" href="#"> Another action </a></li>
+	                <li><a tabindex="-1" href="#"> Something else here </a></li>
+	                <li class="divider"></li>
+	                <li><a tabindex="-1" href="#"> Separated link </a></li>
+	            </ul>
+          	</li>
+          	<li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Kategorije<b class="caret"></b></a>
+                <ul role="menu" class="dropdown-menu">
+	                <li><a tabindex="-1" href="#"> Action </a></li>
+	                <li><a tabindex="-1" href="#"> Another action </a></li>
+	                <li><a tabindex="-1" href="#"> Something else here </a></li>
+	                <li class="divider"></li>
+	                <li><a tabindex="-1" href="#"> Separated link </a></li>
+	            </ul>
+          	</li>
+          	<li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Rezultati<b class="caret"></b></a>
+                <ul role="menu" class="dropdown-menu">
+	                <li><a tabindex="-1" href="#"> Prva godina </a></li>
+	                <li><a tabindex="-1" href="#"> Druga godina </a></li>
+	                <li><a tabindex="-1" href="#"> Treca godina </a></li>
+	                <li><a tabindex="-1" href="#"> Cetvrta godina </a></li>
+	                <li class="divider"></li>
+	                <li><a tabindex="-1" href="#"> Svi rezultati </a></li>
+	            </ul>
+          	</li>
+    	</ul>
+    	<ul class="nav navbar-nav navbar-right">
+      		<li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">Vodic za brucose<b class="caret"></b></a>
+                <ul role="menu" class="dropdown-menu">
+	                <li><a tabindex="-1" href="#"> Action </a></li>
+	                <li><a tabindex="-1" href="#"> Another action </a></li>
+	                <li><a tabindex="-1" href="#"> Something else here </a></li>
+	                <li class="divider"></li>
+	                <li><a tabindex="-1" href="#"> Separated link </a></li>
+	            </ul>
+          	</li>
+    	</ul>
+  	</div>
+</div>
+@stop

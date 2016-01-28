@@ -1,0 +1,766 @@
+<?php
+
+// added in v4.0.5
+use Facebook\FacebookHttpable;
+use Facebook\FacebookCurl;
+use Facebook\FacebookCurlHttpClient;
+ 
+// added in v4.0.0
+use Facebook\FacebookSession;
+use Facebook\FacebookRedirectLoginHelper;
+use Facebook\FacebookRequest;
+use Facebook\FacebookResponse;
+use Facebook\FacebookSDKException;
+use Facebook\FacebookRequestException;
+use Facebook\FacebookOtherException;
+use Facebook\FacebookAuthorizationException;
+use Facebook\GraphObject;
+use Facebook\GraphSessionInfo;
+
+class LoginController extends BaseController {
+
+	public function __construct(){
+		parent::__construct();
+		$this->beforeFilter('auth.logged', array('only' => array('getRegister')));
+		if(Input::get('subdomain') == 'bazaznanja'){
+			//Session::flash('subdomain', 'bazaznanja');
+			Session::set('subdomain', 'bazaznanja');
+		}
+	}
+
+	private function setLayout($data){
+		$this->layout 					= View::make('frontend.master', $data);
+		$this->layout->head 			= View::make('frontend.head', $data);
+		$this->layout->topMenu			= View::make('frontend.topMenu', $data);
+		$this->layout->header 			= View::make('frontend.header', $data);
+		$this->layout->megaMenu			= View::make('frontend.megaMenu', $data);
+		$this->layout->banners 			= View::make('frontend.banners');
+		$this->layout->footer 			= View::make('frontend.footer', $data);
+		$this->layout->footerScript		= View::make('frontend.footerScript', $data);
+		$this->layout->bottomBoxes		= View::make('frontend.bottomBoxes', $data);
+		$this->layout->facebook 		= View::make('frontend.sidebar.facebook');
+		$this->layout->banner300 		= View::make('frontend.sidebar.banner300');
+		$this->layout->search 			= View::make('frontend.sidebar.search');
+		$this->layout->error 			= View::make('frontend.errorReporting', $data);
+		/*$this->layout->newsTicker 		= View::make('frontend.newsTicker', $data);*/
+	}
+
+	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return Response
+	 */
+	public function getIndex()
+	{
+		if(Input::get('subdomain') == 'bazaznanja' && Session::get('id') != null){
+			try {
+				$userbz = User::findOrFail(Session::get('id'));
+				return Redirect::to('https://bazaznanja.puskice.org?userID='.Session::get('id').'&hash='.$userbz->loginhash);
+			} catch (Exception $e) {
+				var_dump($e->getMessage());				
+			}
+		}
+		elseif(Session::get('id')){
+			return Redirect::to(Request::root());
+		}
+		View::share('title', "Пријава | Пушкице | Тачка спајања студената ФОН-а");
+		
+		$articles = News::inCategories(Config::get('settings.homepage'))->where('published', '=', 2)->where('post_type', '=', 1)->where('news.created_at', '<', date("Y-m-d H:i:s", strtotime('now')))->distinct('permalink')->groupBy('news.id')->orderBy('news.created_at', 'desc')->take(10)->get();
+		$featured = News::where('published', '=', 2)->where('featured', '=', 1)->where('post_type', '=', 1)->where('news.created_at', '<', date("Y-m-d H:i:s", strtotime('now')))->orderBy('created_at', 'desc')->take(3)->get();
+		$results = News::inCategories(Config::get('settings.results'))->distinct('permalink')->where('news.created_at', '<', date("Y-m-d H:i:s", strtotime('now')))->where('published', '=', 2)->where('post_type', '=', 1)->groupBy('permalink')->orderBy('news.created_at', 'desc')->take(10)->get();
+		$featuredImage = News::inCategories(array(25))->where('published', '=', 2)->where('news.created_at', '<', date("Y-m-d H:i:s", strtotime('now')))->where('post_type', '=', 1)->distinct('permalink')->groupBy('news.id')->orderBy('news.created_at', 'desc')->take(3)->get();
+		$didYouKnow = News::inCategories(array(30))->where('published', '=', 2)->where('news.created_at', '<', date("Y-m-d H:i:s", strtotime('now')))->where('post_type', '=', 1)->distinct('permalink')->groupBy('news.id')->orderBy('news.created_at', 'desc')->take(3)->get();
+		$magazine = News::inCategories(Config::get('settings.magazine'))->where('news.created_at', '<', date("Y-m-d H:i:s", strtotime('now')))->where('published', '=', 2)->where('post_type', '=', 1)->distinct('permalink')->groupBy('news.id')->orderBy('news.created_at', 'desc')->take(4)->get();
+		$ourComment = News::inCategories(array(17))->where('published', '=', 2)->where('news.created_at', '<', date("Y-m-d H:i:s", strtotime('now')))->where('post_type', '=', 1)->distinct('permalink')->groupBy('news.id')->orderBy('news.created_at', 'desc')->take(4)->get();
+		$feed = getFeed('http://bazaznanja.puskice.org/feed/qa.rss', 4);
+		$poll = null;
+		$poll = Poll::where('published', '=', '1')
+			->where('end_date', '>', date("Y-m-d H:i:s", strtotime('now')))
+			->where('created_at', '<', date("Y-m-d H:i:s", strtotime('now')))
+			->first();
+		if(isset($poll->id)){
+			$poll->pollOptions;
+		}
+		$ogimage = Config::get('settings.defaultImage');
+
+		$meta = "	<meta property='og:image' content='".$ogimage."'/>
+					<meta property='og:title' content='".__("Пријава | Пушкице | Тачка спајања студената ФОН-а")."'/>
+					<meta property='fb:app_id' content='355697367892039'/>
+					<meta property='og:site_name' content='".__("Пушкице - ФОН Андерграунд")."'/>
+					<meta property='og:type' content='article'/>
+					<meta property='og:url' content='"._l(Request::root()."/login")."'/>
+					<meta property='og:description' content='".__("Креирајте свој профил на Пушкицама и остварите приступ бројним погодностима које нудимо студентима")."' />
+					<meta name='twitter:card' content='summary_large_image'>
+					<meta name='twitter:site' content='".__("Пушкице - ФОН Андерграунд")."'>
+					<meta name='twitter:creator' content='@puskice'>
+					<meta name='twitter:domain' content='puskice.org'>
+					<meta name='twitter:app:name:iphone' content='".__("Пушкице")."'>
+					<meta name='twitter:app:name:ipad' content='".__("Пушкице")."'>
+					<meta name='twitter:title' content='".__("Пријава | Пушкице | Тачка спајања студената ФОН-а")."'>
+					<meta name='twitter:description' content='".__("Креирајте свој профил на Пушкицама и остварите приступ бројним погодностима које нудимо студентима")."'>
+					<meta name='twitter:image' content='".$ogimage."'>";
+
+		$data = array(	'articles' 		=> $articles,
+						'featured' 		=> $featured,
+						'results' 		=> $results,
+						'ourComment'	=> $ourComment,
+						'magazine' 		=> $magazine,
+						'featuredImage'	=> $featuredImage,
+						'didYouKnow'	=> $didYouKnow,
+						'feed' 			=> $feed,
+						'poll'			=> $poll,
+						'meta'			=> $meta);
+		$this->setLayout($data);
+		$this->layout->center 			= View::make('frontend.content.login', $data);
+		//$this->layout->carousel 		= View::make('frontend.carousel', $data);
+		$this->layout->boxes 			= View::make('frontend.boxes', $data);
+		$this->layout->imageOfTheWeek	= View::make('frontend.sidebar.imageOfTheWeek', $data);
+		$this->layout->didYouKnow 		= View::make('frontend.sidebar.didYouKnow', $data);
+		$this->layout->twitter 			= View::make('frontend.sidebar.twitter');
+		$this->layout->poll 			= View::make('frontend.sidebar.poll', $data);
+	}
+
+
+	/**
+	 * Show the form for creating a new resource.
+	 *
+	 * @return Response
+	 */
+	public function postSignin()
+	{
+		try{
+			if(Input::get('subdomain') == 'bazaznanja' && Session::get('id') != null){
+				Session::flash('subdomain', 'bazaznanja');
+				Session::set('subdomain', 'bazaznanja');
+			}
+			else{
+				Session::forget('subdomain');
+			}
+			$user=User::where('username', '=', Input::get('username'))->where('password', '=', sha1(Input::get('password')))->where('published', '=', 1)->firstOrFail();
+			$user->last_login = date("Y-m-d H:i:s", strtotime('now'));
+			$user->last_login_ip = Puskice::getIP();
+			$user->loginhash = md5(strtotime('now').$user->username);
+			$user->save();
+			Session::put('username', $user->username);
+			Session::put('user_level', $user->user_level);
+			Session::put('id', $user->id);
+			if(Input::get('remember') == 1){
+				$array = array('username' => $user->username, 'id' => $user->id, 'user_level'=> $user->user_level, 'timestamp' => date('d.m.Y H:i:s', strtotime('now')));
+				$cookie = Cookie::queue('ps_login', serialize($array), 2628000);
+			}
+			if(Input::get('subdomain') != "" && Input::get('subdomain') == 'bazaznanja'){
+				return Redirect::to("https://".rawurldecode(Input::get('subdomain')).".puskice.org/?userID=".$user->id."&hash=".$user->loginhash);
+			}
+			if(Input::get('ref') != ""){
+				return Redirect::to(rawurldecode(Input::get('ref')))->with('message', Lang::get('login.success'))->with('notif', 'success');
+			}
+			else return Redirect::to('/')->with('message', Lang::get('login.success'))->with('notif', 'success');	
+		}
+		catch(Exception $e){
+			return Redirect::to('/')->with('message', Lang::get('login.fail'))->with('notif', 'danger')->withInput();
+		}
+	}
+
+
+	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @return Response
+	 */
+	public function getSignout()
+	{
+		Session::forget('id');
+		Session::flush();
+		$cookie = Cookie::queue('ps_login', '', 1);
+		Cookie::forget('ps_login');
+		if(Input::get('subdomain') == "bazaznanja"){
+			return Redirect::to('https://bazaznanja.puskice.org/?logout=true');
+		}
+		else{
+			return Redirect::to('/')->with('message', Lang::get('login.logoutsuccess'))->with('notif', 'success');
+		}
+	}
+
+
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function getRegister()
+	{
+		View::share('title', "Регистрација | Пушкице | Тачка спајања студената ФОН-а");
+		
+		$articles = News::inCategories(Config::get('settings.homepage'))->where('published', '=', 2)->where('post_type', '=', 1)->where('news.created_at', '<', date("Y-m-d H:i:s", strtotime('now')))->distinct('permalink')->groupBy('news.id')->orderBy('news.created_at', 'desc')->take(10)->get();
+		$featured = News::where('published', '=', 2)->where('featured', '=', 1)->where('post_type', '=', 1)->where('news.created_at', '<', date("Y-m-d H:i:s", strtotime('now')))->orderBy('created_at', 'desc')->take(3)->get();
+		$results = News::inCategories(Config::get('settings.results'))->distinct('permalink')->where('news.created_at', '<', date("Y-m-d H:i:s", strtotime('now')))->where('published', '=', 2)->where('post_type', '=', 1)->groupBy('permalink')->orderBy('news.created_at', 'desc')->take(10)->get();
+		$featuredImage = News::inCategories(array(25))->where('published', '=', 2)->where('news.created_at', '<', date("Y-m-d H:i:s", strtotime('now')))->where('post_type', '=', 1)->distinct('permalink')->groupBy('news.id')->orderBy('news.created_at', 'desc')->take(3)->get();
+		$didYouKnow = News::inCategories(array(30))->where('published', '=', 2)->where('news.created_at', '<', date("Y-m-d H:i:s", strtotime('now')))->where('post_type', '=', 1)->distinct('permalink')->groupBy('news.id')->orderBy('news.created_at', 'desc')->take(3)->get();
+		$magazine = News::inCategories(Config::get('settings.magazine'))->where('news.created_at', '<', date("Y-m-d H:i:s", strtotime('now')))->where('published', '=', 2)->where('post_type', '=', 1)->distinct('permalink')->groupBy('news.id')->orderBy('news.created_at', 'desc')->take(4)->get();
+		$ourComment = News::inCategories(array(17))->where('published', '=', 2)->where('news.created_at', '<', date("Y-m-d H:i:s", strtotime('now')))->where('post_type', '=', 1)->distinct('permalink')->groupBy('news.id')->orderBy('news.created_at', 'desc')->take(4)->get();
+		$feed = getFeed('http://bazaznanja.puskice.org/feed/qa.rss', 4);
+		$poll = null;
+		$poll = Poll::where('published', '=', '1')
+			->where('end_date', '>', date("Y-m-d H:i:s", strtotime('now')))
+			->where('created_at', '<', date("Y-m-d H:i:s", strtotime('now')))
+			->first();
+		if(isset($poll->id)){
+			$poll->pollOptions;
+		}
+		$ogimage = Config::get('settings.defaultImage');
+
+		$meta = "	<meta property='og:image' content='".$ogimage."'/>
+					<meta property='og:title' content='".__("Регистрација | Пушкице | Тачка спајања студената ФОН-а")."'/>
+					<meta property='fb:app_id' content='355697367892039'/>
+					<meta property='og:site_name' content='".__("Пушкице - ФОН Андерграунд")."'/>
+					<meta property='og:type' content='article'/>
+					<meta property='og:url' content='"._l(Request::root()."/login/register")."'/>
+					<meta property='og:description' content='".__("Креирајте свој профил на Пушкицама и остварите приступ бројним погодностима које нудимо студентима")."' />
+					<meta name='twitter:card' content='summary_large_image'>
+					<meta name='twitter:site' content='".__("Пушкице - ФОН Андерграунд")."'>
+					<meta name='twitter:creator' content='@puskice'>
+					<meta name='twitter:domain' content='puskice.org'>
+					<meta name='twitter:app:name:iphone' content='".__("Пушкице")."'>
+					<meta name='twitter:app:name:ipad' content='".__("Пушкице")."'>
+					<meta name='twitter:title' content='".__("Регистрација | Пушкице | Тачка спајања студената ФОН-а")."'>
+					<meta name='twitter:description' content='".__("Креирајте свој профил на Пушкицама и остварите приступ бројним погодностима које нудимо студентима")."'>
+					<meta name='twitter:image' content='".$ogimage."'>";
+
+		$data = array(	'articles' 		=> $articles,
+						'featured' 		=> $featured,
+						'results' 		=> $results,
+						'ourComment'	=> $ourComment,
+						'magazine' 		=> $magazine,
+						'featuredImage'	=> $featuredImage,
+						'didYouKnow'	=> $didYouKnow,
+						'feed' 			=> $feed,
+						'poll'			=> $poll,
+						'meta'			=> $meta);
+		$this->setLayout($data);
+		$this->layout->center 			= View::make('frontend.content.register', $data);
+		//$this->layout->carousel 		= View::make('frontend.carousel', $data);
+		$this->layout->boxes 			= View::make('frontend.boxes', $data);
+		$this->layout->imageOfTheWeek	= View::make('frontend.sidebar.imageOfTheWeek', $data);
+		$this->layout->didYouKnow 		= View::make('frontend.sidebar.didYouKnow', $data);
+		$this->layout->twitter 			= View::make('frontend.sidebar.twitter');
+		$this->layout->poll 			= View::make('frontend.sidebar.poll', $data);
+		
+	}
+
+
+	/**
+	 * Show the form for editing the specified resource.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function postRegister()
+	{
+		$rules = array(
+		        'firstName'     	=> 'required|max:30|min:2',
+		        'lastName'  	   	=> 'required|max:30|min:2',
+		        'username'     		=> 'required|unique:users,username|max:30|min:3',
+		        'password'     		=> 'required',
+		        'repeatPassword' 	=> 'same:password',
+		        'email'				=> 'required|email|unique:users,email'
+		);
+		$v = Validator::make(Input::all(), $rules);
+		if($v->passes()){
+			$newuser = new User;
+			$newuser->username = strip_tags(Input::get('username'));
+			$newuser->first_name = strip_tags(Input::get('firstName'));
+			$newuser->last_name = strip_tags(Input::get('lastName'));
+			$newuser->password = sha1(strip_tags(Input::get('password')));
+			$newuser->email = strip_tags(Input::get('email'));
+			$newuser->user_level = 1;
+			$newuser->hash = sha1($newuser->username.$newuser->email);
+			$newuser->published = 0;
+			$newuser->save();
+
+			$user = array(
+			    'email'=>'no-reply@puskice.org',
+			    'name'=>'Puškice nalog'
+			);
+			// the data that will be passed into the mail view blade template
+			$data = array(
+			    'confirmurl' => Request::root()."/login/confirm-account/".$newuser->hash,
+			    'username' => $newuser->username
+			);
+			 
+			// use Mail::send function to send email passing the data and using the $user variable in the closure
+			Mail::send('emails.newuser', $data, function($message) use ($user)
+			{
+			  $message->from('no-reply@puskice.org', 'Info tim Puškice');
+			  $message->to(Input::get('email'), Input::get('name'))->subject('Aktivirajte Puškice nalog');
+			});
+			return Redirect::to(URL::action('LoginController@getRegister'))->with('message', Lang::get('login.registerSuccess'))->with('notif', 'success');
+		}
+		else{
+			return Redirect::to(URL::action('LoginController@getRegister'))->withInput(Input::all())->withErrors($v);
+		}
+	}
+
+
+	public function getConfirmAccount($hash){
+		try{
+			$user = User::where('hash', '=', $hash)->firstOrFail();	
+			if($user != null){
+				$user->published = 1;
+				$user->hash = "";
+				$user->save();
+			}
+
+			return Redirect::to(Request::root())->with('message', Lang::get('login.activated'))->with('notif', 'success');
+		}
+		catch(Exception $e){
+			return Redirect::to(Request::root())->with('message', Lang::get('login.error'))->with('notif', 'danger');
+		}
+	}	
+
+
+	public function getResetPassword()
+	{
+		View::share('title', Lang::get('login.resetPass'));
+		$this->layout = View::make('login.master');
+		$this->layout->head = View::make('login.head');
+		$this->layout->error= View::make('backend.errorReporting');
+		$this->layout->form = View::make('login.resetpass');
+	}
+
+	public function postSendReset(){
+		$rules = array(
+		        'email'		=>'required|email'
+		);
+		$v = Validator::make(Input::all(), $rules);
+		if($v->passes()){
+			$edituser = User::where('email', '=', strip_tags(Input::get('email')))->firstOrFail();
+			$edituser->hash = md5($edituser->username.strtotime("now"));
+			$edituser->save();
+			$user = array(
+			    'email'=>'no-reply@puskice.org',
+			    'name'=>'Puškice nalog'
+			);
+			// the data that will be passed into the mail view blade template
+			$data = array(
+			    'confirmurl' => Request::root()."/login/new-password/".$edituser->hash,
+			    'username' => $edituser->username
+			);
+			 
+			// use Mail::send function to send email passing the data and using the $user variable in the closure
+			Mail::send('emails.resetpass', $data, function($message) use ($user)
+			{
+			  $message->from('no-reply@puskice.org', 'Puškice');
+			  $message->to(Input::get('email'), Input::get('name'))->subject('Reset lozinke za Puškice nalog');
+			});
+			return Redirect::to(Request::root())->with('message', Lang::get('login.resetSent'))->with('notif', 'success');
+		}
+		else{
+			return Redirect::to(URL::action('LoginController@getResetPassword'))->withInput(Input::all())->withErrors($v);
+		}
+	}
+
+	public function getNewPassword($hash)
+	{
+		View::share('title', Lang::get('login.newPass'));
+		View::share('hash', $hash);
+		$this->layout = View::make('login.master');
+		$this->layout->head = View::make('login.head');
+		$this->layout->error= View::make('backend.errorReporting');
+		$this->layout->form = View::make('login.newpassword');
+	}
+
+	public function postChangePassword(){
+		$rules = array(
+		        'password'     		=> 'required',
+		        'confirmPassword' 	=> 'same:password'
+		);
+		$v = Validator::make(Input::all(), $rules);
+		if($v->passes()){
+			$user = User::where('hash', '=', strip_tags(Input::get('hash')))->where('hash', '<>', '')->firstOrFail();
+			$user->password = sha1(strip_tags(Input::get('password')));
+			$user->hash = "";
+			$user->save();
+			return Redirect::to(Request::root())->with('message', Lang::get('login.passwordChanged'))->with('notif', 'success');;
+		}
+		else{
+			return Redirect::to(URL::action('LoginController@getNewPassword')."/".strip_tags(Input::get('hash')))->withInput(Input::all())->withErrors($v);
+		}
+	}
+
+	public function getMyProfile(){
+		try {
+			View::share('title', "Моје Пушкице | Пушкице | Тачка спајања студената ФОН-а");
+			$user = User::findOrFail(Session::get('id'));
+			$articles = News::inCategories(Config::get('settings.homepage'))->where('published', '=', 2)->where('post_type', '=', 1)->where('news.created_at', '<', date("Y-m-d H:i:s", strtotime('now')))->distinct('permalink')->groupBy('news.id')->orderBy('news.created_at', 'desc')->take(10)->get();
+			$featured = News::where('published', '=', 2)->where('featured', '=', 1)->where('post_type', '=', 1)->where('news.created_at', '<', date("Y-m-d H:i:s", strtotime('now')))->orderBy('created_at', 'desc')->take(3)->get();
+			$results = News::inCategories(Config::get('settings.results'))->distinct('permalink')->where('news.created_at', '<', date("Y-m-d H:i:s", strtotime('now')))->where('published', '=', 2)->where('post_type', '=', 1)->groupBy('permalink')->orderBy('news.created_at', 'desc')->take(10)->get();
+			$featuredImage = News::inCategories(array(25))->where('published', '=', 2)->where('news.created_at', '<', date("Y-m-d H:i:s", strtotime('now')))->where('post_type', '=', 1)->distinct('permalink')->groupBy('news.id')->orderBy('news.created_at', 'desc')->take(3)->get();
+			$didYouKnow = News::inCategories(array(30))->where('published', '=', 2)->where('news.created_at', '<', date("Y-m-d H:i:s", strtotime('now')))->where('post_type', '=', 1)->distinct('permalink')->groupBy('news.id')->orderBy('news.created_at', 'desc')->take(3)->get();
+			$magazine = News::inCategories(Config::get('settings.magazine'))->where('news.created_at', '<', date("Y-m-d H:i:s", strtotime('now')))->where('published', '=', 2)->where('post_type', '=', 1)->distinct('permalink')->groupBy('news.id')->orderBy('news.created_at', 'desc')->take(4)->get();
+			$ourComment = News::inCategories(array(17))->where('published', '=', 2)->where('news.created_at', '<', date("Y-m-d H:i:s", strtotime('now')))->where('post_type', '=', 1)->distinct('permalink')->groupBy('news.id')->orderBy('news.created_at', 'desc')->take(4)->get();
+			$feed = getFeed('http://bazaznanja.puskice.org/feed/qa.rss', 4);
+			$poll = null;
+			$poll = Poll::where('published', '=', '1')
+				->where('end_date', '>', date("Y-m-d H:i:s", strtotime('now')))
+				->where('created_at', '<', date("Y-m-d H:i:s", strtotime('now')))
+				->first();
+			if(isset($poll->id)){
+				$poll->pollOptions;
+			}
+			$ogimage = Config::get('settings.defaultImage');
+
+			$meta = "	<meta property='og:image' content='".$ogimage."'/>
+						<meta property='og:title' content='".__("Моје Пушкице | Пушкице | Тачка спајања студената ФОН-а")."'/>
+						<meta property='fb:app_id' content='355697367892039'/>
+						<meta property='og:site_name' content='".__("Пушкице - ФОН Андерграунд")."'/>
+						<meta property='og:type' content='article'/>
+						<meta property='og:url' content='"._l(Request::root()."/login/my-profile")."'/>
+						<meta property='og:description' content='".__("Креирајте свој профил на Пушкицама и остварите приступ бројним погодностима које нудимо студентима")."' />
+						<meta name='twitter:card' content='summary_large_image'>
+						<meta name='twitter:site' content='".__("Пушкице - ФОН Андерграунд")."'>
+						<meta name='twitter:creator' content='@puskice'>
+						<meta name='twitter:domain' content='puskice.org'>
+						<meta name='twitter:app:name:iphone' content='".__("Пушкице")."'>
+						<meta name='twitter:app:name:ipad' content='".__("Пушкице")."'>
+						<meta name='twitter:title' content='".__("Моје Пушкице | Пушкице | Тачка спајања студената ФОН-а")."'>
+						<meta name='twitter:description' content='".__("Креирајте свој профил на Пушкицама и остварите приступ бројним погодностима које нудимо студентима")."'>
+						<meta name='twitter:image' content='".$ogimage."'>";
+
+			$data = array(	'articles' 		=> $articles,
+							'featured' 		=> $featured,
+							'results' 		=> $results,
+							'ourComment'	=> $ourComment,
+							'magazine' 		=> $magazine,
+							'featuredImage'	=> $featuredImage,
+							'didYouKnow'	=> $didYouKnow,
+							'feed' 			=> $feed,
+							'poll'			=> $poll,
+							'meta'			=> $meta,
+							'user' 			=> $user);
+			$this->setLayout($data);
+			$this->layout->center 			= View::make('frontend.content.profile', $data);
+			//$this->layout->carousel 		= View::make('frontend.carousel', $data);
+			$this->layout->boxes 			= View::make('frontend.boxes', $data);
+			$this->layout->imageOfTheWeek	= View::make('frontend.sidebar.imageOfTheWeek', $data);
+			$this->layout->didYouKnow 		= View::make('frontend.sidebar.didYouKnow', $data);
+			$this->layout->twitter 			= View::make('frontend.sidebar.twitter');
+			$this->layout->poll 			= View::make('frontend.sidebar.poll', $data);	
+		} catch (Exception $e) {
+			return Redirect::to('login')->with('message', __("Потребно је да се прво улогујете"))->with('notif', 'success');
+		}
+		
+	}
+
+	public function postUpdateProfile(){
+		try {
+			$user = User::findOrFail(Session::get('id'));
+			$user->first_name = Input::get('firstName');
+			$user->last_name = Input::get('lastName');
+			if(Input::get('password') == Input::get('repeatPassword') && Input::get('password') != ""){
+				$user->password = sha1(strip_tags(Input::get('password')));
+			}
+			$user->save();
+			return Redirect::to(URL::action('LoginController@getMyProfile'))->with('notif', 'success')->with('message', __("Налог успешно ажуриран"));
+		} catch (Exception $e) {
+			return Redirect::to(URL::action('LoginController@getIndex'))->with('notif', 'danger')->with('message', __("Корисник не постоји или нисте улоговани"));	
+		}
+	}
+
+	public static function facebookLoginLink(){
+
+		// Checking Session
+		$object = "";
+		if(Session::get('fb_token')){
+			try {
+				$session = new FacebookSession(Session::get('fb_token'));
+  				$response = (new FacebookRequest($session, 'GET', '/me'))->execute();
+  				$object = $response->getGraphObject();
+			} catch (FacebookRequestException $ex) {
+  				return $ex->getMessage();
+			} catch (\Exception $ex) {
+  				return $ex->getMessage();
+			}
+			return "<span class='skills'>".$object->getProperty('name').'</span>';
+		}
+		else{
+				// Requested permissions - optional
+			$permissions = array(
+		  		'email',
+		  		'publish_actions'
+			);
+			// Login Healper with reditect URI
+			$helper = new FacebookRedirectLoginHelper( 'https://www.puskice.org/login/redirect-here' );
+		 
+			try {
+		  		$session = $helper->getSessionFromRedirect();
+			}
+			catch( FacebookRequestException $ex ) {
+		 		// Exception
+				return Lang::get('frontend.fb_problem');
+			}
+			catch( Exception $ex ) {
+		  		// When validation fails or other local issues
+				return Lang::get('frontend.fb_our_problem');
+			}
+
+			if(isset($session))
+			{
+		  		Session::put('fb_token', $session->getToken());
+		  		// Request for user data
+		  		$request = new FacebookRequest( $session, 'GET', '/me' );
+		  		$response = $request->execute();
+		  		// Responce
+		  		$object = $response->getGraphObject();
+		  		Session::put('facebook_id', $object->getProperty('id'));
+
+		  		try {
+					if(Session::get('tw_user_id')){
+						$user = User::where('facebook_id', '=', $object->getProperty('id'))->orWhere('twitter_id', '=', Session::get('tw_user_id'))->orWhere('email', 'LIKE', $object->getProperty('email'))->firstOrFail();
+					}
+					else{
+						$user = User::where('facebook_id', '=', $object->getProperty('id'))->orWhere('email', 'LIKE', $object->getProperty('email'))->firstOrFail();	
+					}
+					$user->first_name = $object->getProperty('first_name');
+					$user->last_name = $object->getProperty('last_name');
+					$user->last_login = date("Y-m-d H:i:s", strtotime('now'));
+					$user->last_login_ip = Puskice::getIP();
+					$user->loginhash = md5(strtotime('now').$user->username);
+					$user->facebook_id = $object->getProperty('id');
+					$user->email = $object->getProperty('email');
+					$user->fb_token = $session->getToken();
+					//$user->gender = $object->getProperty('gender');
+					$user->save();
+					Session::put('id', $user->id);
+
+				} catch (Exception $e) {
+					$user = new User;
+					$user->first_name = $object->getProperty('first_name');
+					$user->last_name = $object->getProperty('last_name');
+					$i = 0;
+					while(!isset($user->username) || $user->username == ""){
+						if($i != 0) $username .= '-'.$i;
+						try {
+							$testuser = User::where('username', '=', $username)->firstOrFail();
+							$i ++;
+							continue;
+						} catch (Exception $e) {
+							$user->username = $username;
+							$user->password = md5(strtotime('now'));
+						}
+					}
+					$user->user_level = 1;
+					$user->published = 1;
+					$user->last_login = date("Y-m-d H:i:s", strtotime('now'));
+					$user->last_login_ip = Puskice::getIP();
+					$user->loginhash = md5(strtotime('now').$user->username);
+					$user->facebook_id = $object->getProperty('id');
+					$user->email = $object->getProperty('email');
+					$user->fb_token = $session->getToken();
+					//$user->gender = $object->getProperty('gender');
+					$user->save();
+					Session::put('id', $user->id);
+				}
+		  		return "<li>".$object->getProperty('name').'</li>';
+			}
+			else
+			{
+		  		// Login URL if session not found
+				//return '<div class="fb-login-button" data-max-rows="1" data-scope="public_profile,email" data-size="medium" data-show-faces="false" data-auto-logout-link="false"></div>';
+				return '<a href="' . $helper->getLoginUrl($permissions) . '"><img src="'.Request::root().'/assets/frontend/img/fblogin.png" alt="Facebook login"/></a>';
+			}	
+		}
+
+	}
+
+	public function getRedirectHere(){
+		$helper = new FacebookRedirectLoginHelper( 'https://www.puskice.org/login/redirect-here' );
+		 
+		try {
+		  $session = $helper->getSessionFromRedirect();
+		}
+		catch( FacebookRequestException $ex ) {
+		  // Exception
+			var_dump($ex->getMessage());
+		}
+		catch( Exception $ex ) {
+		  // When validation fails or other local issues
+			var_dump($ex->getMessage());
+		}
+
+		// Checking Session
+		if(isset($session))
+			{
+		  		Session::put('fb_token', $session->getToken());
+		  		// Request for user data
+		  		$request = new FacebookRequest( $session, 'GET', '/me' );
+		  		$response = $request->execute();
+		  		// Responce
+		  		$object = $response->getGraphObject();
+		  		Session::put('facebook_id', $object->getProperty('id'));
+
+		  		try {
+					
+					$user = User::where('facebook_id', '=', $object->getProperty('id'))->orWhere('email', 'LIKE', $object->getProperty('email'))->firstOrFail();	
+					$user->first_name = $object->getProperty('first_name');
+					$user->last_name = $object->getProperty('last_name');
+					$user->last_login = date("Y-m-d H:i:s", strtotime('now'));
+					$user->last_login_ip = Puskice::getIP();
+					$user->loginhash = md5(strtotime('now').$user->username);
+					$user->facebook_id = $object->getProperty('id');
+					$user->email = $object->getProperty('email');
+					$user->fb_token = $session->getToken();
+					//$user->gender = $object->getProperty('gender');
+					$user->save();
+					Session::put('id', $user->id);
+
+				} catch (Exception $e) {
+					$user = new User;
+					$user->first_name = $object->getProperty('first_name');
+					$user->last_name = $object->getProperty('last_name');
+					$username = slugify($user->first_name);
+					$i = 0;
+					while(!isset($user->username) || $user->username == ""){
+						if($i != 0) $username .= '-'.$i;
+						try {
+							$testuser = User::where('username', '=', $username)->firstOrFail();
+							$i ++;
+							continue;
+						} catch (Exception $e) {
+							$user->username = $username;
+							$user->password = md5(strtotime('now'));
+						}
+					}
+					$user->user_level = 1;
+					$user->published = 1;
+					$user->last_login = date("Y-m-d H:i:s", strtotime('now'));
+					$user->last_login_ip = Puskice::getIP();
+					$user->loginhash = md5(strtotime('now').$user->username);
+					$user->facebook_id = $object->getProperty('id');
+					$user->email = $object->getProperty('email');
+					$user->fb_token = $session->getToken();
+					//$user->gender = $object->getProperty('gender');
+					$user->save();
+					Session::put('id', $user->id);
+				}
+				$array = array('username' => $user->username, 'id' => $user->id, 'user_level'=> $user->user_level, 'timestamp' => date('d.m.Y H:i:s', strtotime('now')));
+				$cookie = Cookie::queue('ps_login', serialize($array), 2628000);
+		  		if(Input::get('ref') != ""){
+					return Redirect::to(rawurldecode(Input::get('ref')))->with('message', Lang::get('login.success'))->with('notif', 'success');
+				}
+				if(Session::get('subdomain') != "" && Session::get('subdomain') == 'bazaznanja'){
+					return Redirect::to("https://".rawurldecode(Session::get('subdomain')).".puskice.org/?userID=".$user->id."&hash=".$user->loginhash);
+				}
+				else return Redirect::to('/')->with('message', Lang::get('login.success'))->with('notif', 'success');
+			}
+	}
+
+	public static function getFacebookLoginFormLink(){
+
+		// Checking Session
+		$object = "";
+		if(Session::get('fb_token')){
+			try {
+				$session = new FacebookSession(Session::get('fb_token'));
+  				$response = (new FacebookRequest($session, 'GET', '/me'))->execute();
+  				$object = $response->getGraphObject();
+			} catch (FacebookRequestException $ex) {
+  				return $ex->getMessage();
+			} catch (\Exception $ex) {
+  				return $ex->getMessage();
+			}
+			return "<span class='skills'>".$object->getProperty('name').'</span>';
+		}
+		else{
+				// Requested permissions - optional
+			$permissions = array(
+		  		'email',
+		  		'publish_actions'
+			);
+			// Login Healper with reditect URI
+			if(Input::get('ref')){
+				$helper = new FacebookRedirectLoginHelper( 'https://www.puskice.org/login/redirect-here' );
+			}
+			if(Input::get('subdomain') && Input::get('subdomain') == 'bazaznanja'){
+				$helper = new FacebookRedirectLoginHelper( 'https://www.puskice.org/login/redirect-here' );	
+			}
+			else $helper = new FacebookRedirectLoginHelper( 'https://www.puskice.org/login/redirect-here' );
+		 
+			try {
+		  		$session = $helper->getSessionFromRedirect();
+			}
+			catch( FacebookRequestException $ex ) {
+		 		// Exception
+				return Lang::get('frontend.fb_problem');
+			}
+			catch( Exception $ex ) {
+		  		// When validation fails or other local issues
+				return Lang::get('frontend.fb_our_problem');
+			}
+
+			if(isset($session))
+			{
+		  		Session::put('fb_token', $session->getToken());
+		  		// Request for user data
+		  		$request = new FacebookRequest( $session, 'GET', '/me' );
+		  		$response = $request->execute();
+		  		// Responce
+		  		$object = $response->getGraphObject();
+		  		Session::put('facebook_id', $object->getProperty('id'));
+
+		  		try {
+					
+					$user = User::where('facebook_id', '=', $object->getProperty('id'))->orWhere('email', 'LIKE', $object->getProperty('email'))->firstOrFail();	
+					
+					$user->first_name = $object->getProperty('first_name');
+					$user->last_name = $object->getProperty('last_name');
+					$user->last_login = date("Y-m-d H:i:s", strtotime('now'));
+					$user->last_login_ip = Puskice::getIP();
+					$user->loginhash = md5(strtotime('now').$user->username);
+					$user->facebook_id = $object->getProperty('id');
+					$user->email = $object->getProperty('email');
+					$user->fb_token = $session->getToken();
+					//$user->gender = $object->getProperty('gender');
+					$user->save();
+					Session::put('id', $user->id);
+
+				} catch (Exception $e) {
+					$user = new User;
+					$user->first_name = $object->getProperty('first_name');
+					$user->last_name = $object->getProperty('last_name');
+					$i = 0;
+					while(!isset($user->username) || $user->username == ""){
+						if($i != 0) $username .= '-'.$i;
+						try {
+							$testuser = User::where('username', '=', $username)->firstOrFail();
+							$i ++;
+							continue;
+						} catch (Exception $e) {
+							$user->username = $username;
+							$user->password = md5(strtotime('now'));
+						}
+					}
+					$user->user_level = 1;
+					$user->published = 1;
+					$user->last_login = date("Y-m-d H:i:s", strtotime('now'));
+					$user->last_login_ip = Puskice::getIP();
+					$user->loginhash = md5(strtotime('now').$user->username);
+					$user->facebook_id = $object->getProperty('id');
+					$user->email = $object->getProperty('email');
+					$user->fb_token = $session->getToken();
+					$user->gender = $object->getProperty('gender');
+					$user->save();
+					Session::put('id', $user->id);
+				}
+		  		return "<li>".$object->getProperty('name').'</li>';
+			}
+			else
+			{
+		  		// Login URL if session not found
+				//return '<div class="fb-login-button" data-max-rows="1" data-scope="public_profile,email" data-size="medium" data-show-faces="false" data-auto-logout-link="false"></div>';
+				return '<a href="' . $helper->getLoginUrl($permissions) . '"><img src="'.Request::root().'/assets/frontend/img/facebook_login.png" alt="Facebook login"/></a>';
+			}	
+		}
+
+	}
+}

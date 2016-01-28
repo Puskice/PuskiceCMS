@@ -1,0 +1,32 @@
+
+<IfModule mod_rewrite.c>
+	Options -MultiViews +FollowSymLinks
+	ErrorDocument 404 /index.php
+	DirectoryIndex index.php
+	RewriteEngine On
+
+	#RewriteCond %{HTTPS} off
+	#RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+	
+	#RewriteCond %{HTTP_HOST} !^www\.
+	#RewriteRule ^(.*)$ http://www.%{HTTP_HOST}/$1 [R=301,L]
+
+	RewriteBase /
+
+	RewriteCond %{SERVER_PORT} ^443$ [OR]
+
+	RewriteCond %{HTTPS} =on 
+	RewriteRule ^(.*)$ http://www.puskice.org/$1 [R=301,L]
+
+    # Removes index.php from ExpressionEngine URLs
+    RewriteCond %{THE_REQUEST} ^GET.*index\.php [NC]
+    RewriteCond %{REQUEST_URI} !/system/.* [NC]
+    RewriteRule (.*?)index\.php/*(.*) /$1$2 [R=301,NE,L]
+
+    # Directs all EE web requests through the site index file
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ /index.php/$1 [L]
+	
+</IfModule>
+
